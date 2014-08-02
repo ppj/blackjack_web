@@ -1,6 +1,6 @@
-require 'rubygems'
-require 'sinatra'
-require 'sinatra/reloader'
+if RUBY_PLATFORM.downcase.include?('mswin')
+  require 'sinatra/reloader'
+end
 
 set :sessions, true
 
