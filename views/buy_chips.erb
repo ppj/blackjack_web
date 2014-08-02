@@ -1,0 +1,9 @@
+<h4>
+  Welcome <%=session[:player_name]%>! Time to buy chips!
+</h4>
+
+<form action='/pre_round' method='post'>
+  How many?: <input type='text' name='player_chips' />
+  <br />
+  <input type='submit' class='btn' />
+</form>

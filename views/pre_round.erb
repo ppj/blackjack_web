@@ -1,0 +1,8 @@
+<h4>Hi <%=session[:player_name]%>, You have <%=session[:player_chips]%> chips.</h4>
+<h5>Place a bet to start a new round</h5>
+
+<form action='/round' method='post'>
+  Place Bet: <input type='text' name='player_chips' /> chips
+  <br />
+  <input type='submit' class='btn' />
+</form>
