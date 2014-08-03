@@ -5,19 +5,11 @@ end
 set :sessions, true
 
 get '/' do
-  # "Hello, Stupendous Saravanan!"
-  erb :set_name
+  erb :new_game
 end
-
-
-post '/buy_chips' do
-  session[:player_name] = params[:player_name]
-  erb :buy_chips
-
-end
-
 
 post '/pre_round' do
+  session[:player_name] = params[:player_name]
   session[:player_chips] = params[:player_chips]
   erb :pre_round
 end
