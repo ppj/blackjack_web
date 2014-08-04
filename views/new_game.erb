@@ -1,11 +1,21 @@
-<h4>
-  Player Profile
-</h4>
+<h4>Player Profile</h4>
 
-<form action='/pre_round' method='post'>
-  Name: <input type='text' name='player_name' />
-  <br />
-  How many chips would you like to start with?: <input type='text' name='player_chips' />
-  <br />
-  <input type='submit' class='btn' />
+<form class="form-horizontal" action='/set_player_profile' method='post'>
+  <div class="control-group">
+    <label class="control-label">Name</label>
+    <div class="controls">
+      <input type="text" name="player_name" value='Alex(ander/andra)'>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">How many chips would you like to start with?</label>
+    <div class="controls">
+      <input type="text" name="player_chips" value="500">
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn">Start Playing!</button>
+    </div>
+  </div>
 </form>

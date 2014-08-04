@@ -1,0 +1,28 @@
+<h4><%=session[:player_name]%>'s Bet: <%=session[:player_bet]%></h4>
+
+
+<div>
+  <h5>Your Cards: </h5>
+  <% session[:player_cards].each do |card| %>
+    <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
+  <% end %>
+
+  <p>Your Total = <%= total(session[:player_cards]) %></p>
+</div>
+
+<div>
+  <h5>Dealer's Cards: </h5>
+  <% session[:dealer_cards].each do |card| %>
+    <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
+  <% end %>
+  <p>Cards remaining in the deck: <%= session[:deck].size %></p>
+</div>
+
+<form class="form-horizontal" action='/game/player/hit' method='post'>
+  <input type="submit" class="btn btn-primary" value="Hit!"/>
+</form>
+
+<form class="form-horizontal" action='/game/player/stay' method='post'>
+  <input type="submit" class="btn btn-warning" value="Stay"/>
+</form>
+

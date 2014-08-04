@@ -1,8 +1,23 @@
 <h4>Hi <%=session[:player_name]%>, You have <%=session[:player_chips]%> chips.</h4>
 <h5>Place a bet to start a new round</h5>
 
-<form action='/round' method='post'>
+<!--form action='/round' method='post'>
   Bet: <input type='text' name='player_bet' /> chips
   <br />
   <input type='submit' class='btn' />
+</form-->
+
+<form class="form-horizontal" action='/begin_round' method='post'>
+  <div class="control-group">
+    <label class="control-label">Bet</label>
+    <div class="controls">
+      <input type="text" name="player_bet" value="100"> chips
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn">Deal!</button>
+    </div>
+  </div>
+
 </form>
