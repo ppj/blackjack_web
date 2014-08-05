@@ -7,7 +7,7 @@
     <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
   <% end %>
 
-  <p>Your Total = <%= total(session[:player_cards]) %></p>
+  <p><%=session[:player_name]%>'s Total = <%= total(session[:player_cards]) %></p>
 </div>
 
 <div>
@@ -18,11 +18,20 @@
   <p>Cards remaining in the deck: <%= session[:deck].size %></p>
 </div>
 
-<form class="form-horizontal" action='/game/player/hit' method='post'>
-  <input type="submit" class="btn btn-primary" value="Hit!"/>
-</form>
+<% if !@error %>
+  <form class="form-horizontal" action='/game/player/hit' method='post'>
+    <input type="submit" class="btn btn-primary" value="Hit!"/>
+  </form>
 
-<form class="form-horizontal" action='/game/player/stay' method='post'>
-  <input type="submit" class="btn btn-warning" value="Stay"/>
-</form>
+  <form class="form-horizontal" action='/game/player/stay' method='post'>
+    <input type="submit" class="btn btn-warning" value="Stay"/>
+  </form>
+<% elsif session[:player_chips] > 0 %>
+  <form class="form-horizontal" action='/play_again' method='post'>
+    <input type="submit" class="btn btn-primary" value="Play Again"/>
+  </form>
+  <form class="form-horizontal" action='/game_over'>
+    <input type="submit" class="btn btn-success" value="Show Me The Money!!"/>
+  </form>
 
+<% end %>
