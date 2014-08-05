@@ -20,7 +20,6 @@
   <% session[:dealer_cards][start_idx..-1].each do |card| %>
     <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
   <% end %>
-  <p>Cards remaining in the deck: <%= session[:deck].size %></p>
 </div>
 
 <% if !@error %>
