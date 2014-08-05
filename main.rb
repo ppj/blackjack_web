@@ -129,6 +129,5 @@ end
 
 
 get '/game_over' do
-  #erb :game_over
-  "<h4>Encash your #{session[:player_chips]} chips @ the cash counter, #{session[:player_name]}!</h4>"
+  erb :game_over
 end
