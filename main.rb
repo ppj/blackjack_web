@@ -45,21 +45,30 @@ end
 
 
 post '/set_player_profile' do
-  session[:alert] = ""
   session[:player_name]  = params[:player_name]
   session[:player_chips] = params[:player_chips].to_i
+  session[:deck]         = initialize_deck
+  session[:error]        = nil
   redirect :pre_round
 end
 
 
 get '/pre_round' do
+  @error = session[:error] if session[:error]
   erb :pre_round
 end
 
 
 post '/begin_round' do
   session[:player_bet] = params[:player_bet].to_i
-  session[:deck] = initialize_deck
+  if session[:player_bet] > session[:player_chips]
+    session[:error] = "You have only #{session[:player_chips]} chips remaining!"
+    redirect '/pre_round'
+  elsif session[:player_bet] == 0
+    session[:error] = "Please place a valid bet, #{session[:player_name]}."
+    redirect '/pre_round'
+  end
+
   session[:player_cards] = []
   session[:dealer_cards] = []
   session[:player_stays] = false
@@ -124,6 +133,7 @@ end
 
 
 post '/play_again' do
+  session[:error] = nil
   redirect :pre_round
 end
 

@@ -12,7 +12,12 @@
 
 <div>
   <h5>Dealer's Cards: </h5>
-  <% session[:dealer_cards].each do |card| %>
+  <% start_idx = 0 %>
+  <% unless session[:player_stays] || @error %>
+    <img src="<%= './images/cards2/b.gif' %>" class="img-rounded"/>
+    <% start_idx = 1 %>
+  <% end %>
+  <% session[:dealer_cards][start_idx..-1].each do |card| %>
     <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
   <% end %>
   <p>Cards remaining in the deck: <%= session[:deck].size %></p>
@@ -33,5 +38,9 @@
   <form class="form-horizontal" action='/game_over'>
     <input type="submit" class="btn btn-success" value="Show Me The Money!!"/>
   </form>
-
+<% else %>
+  <h4>You've run out of chips, <%=session[:player_name]%><br/>
+      No more BlackJack for you!
+  </h4>
+  <h6>Unless you go to <a href='/'>start over</a></h6>
 <% end %>
