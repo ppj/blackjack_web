@@ -20,6 +20,7 @@
   <% session[:dealer_cards][start_idx..-1].each do |card| %>
     <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
   <% end %>
+  <p>Cards remaining in the deck: <%= session[:deck].size %></p>
 </div>
 <br/>
 <% if !@error %>
@@ -41,5 +42,5 @@
   <h4>You've run out of chips, <%=session[:player_name]%><br/>
       No more BlackJack for you!
   </h4>
-  <h6>Unless you go to <a href='/'>start over</a></h6>
+  <h6>Unless you <a href='/'>start over</a></h6>
 <% end %>

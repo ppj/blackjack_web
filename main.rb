@@ -62,6 +62,7 @@ end
 
 post '/begin_round' do
   session[:player_bet] = params[:player_bet].to_i
+  session[:deck] = initialize_deck if session[:deck].size < 20
   if session[:player_bet] > session[:player_chips]
     session[:error] = "You have only #{session[:player_chips]} chips remaining!"
     redirect '/pre_round'
