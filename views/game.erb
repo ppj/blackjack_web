@@ -14,7 +14,7 @@
   <h5>Dealer's Cards: </h5>
   <% start_idx = 0 %>
   <% unless session[:player_stays] || @error %>
-    <img src="<%= './images/cards2/b.gif' %>" class="img-rounded"/>
+    <img src="<%= './images/cards2/B.gif' %>" class="img-rounded"/>
     <% start_idx = 1 %>
   <% end %>
   <% session[:dealer_cards][start_idx..-1].each do |card| %>
