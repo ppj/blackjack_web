@@ -4,7 +4,8 @@
   <div class="control-group">
     <label class="control-label">Name</label>
     <div class="controls">
-      <input type="text" name="player_name" value='Alex'>
+      <%name = session[:player_name] if session[:player_name]%>
+      <input type="text" name="player_name" value='<%=name%>'>
     </div>
   </div>
   <div class="control-group">

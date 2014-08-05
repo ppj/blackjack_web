@@ -47,6 +47,7 @@ end
 post '/set_player_profile' do
   session[:player_name]  = params[:player_name]
   session[:player_chips] = params[:player_chips].to_i
+  session[:player_bet]   = session[:player_chips]/5
   session[:deck]         = initialize_deck
   session[:error]        = nil
   redirect :pre_round
