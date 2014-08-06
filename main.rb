@@ -37,7 +37,7 @@ helpers do
 
 
   def card_image(card)
-    "<img src='/images/cards2/" + card.join + ".gif' class='img-rounded card-image' />"
+    "<img src='/images/cards2/#{card.join}.gif' class='img-rounded card-image' />"
   end
 
 end
