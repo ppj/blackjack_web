@@ -32,7 +32,12 @@ helpers do
         hand_total -= 10
       end
     end
-    return hand_total
+    hand_total
+  end
+
+
+  def card_image(card)
+    "<img src='/images/cards2/" + card.join + ".gif' class='img-rounded card-image' />"
   end
 
 end

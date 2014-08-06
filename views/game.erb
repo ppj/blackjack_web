@@ -3,7 +3,7 @@
 <div class='well'>
   <h4><%=session[:player_name]%>'s Cards: </h4>
   <% session[:player_cards].each do |card| %>
-    <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
+    <%= card_image(card) %>
   <% end %>
   <p>Total = <%= total(session[:player_cards]) %></p>
 </div>
@@ -12,11 +12,11 @@
   <h4>Dealer's Cards: </h4>
   <% start_idx = 0 %>
   <% if @show_hit_stay_buttons %>
-    <img src="<%= './images/cards2/B.gif' %>" class="img-rounded"/>
+    <%= card_image(['B', '']) %>
     <% start_idx = 1 %>
   <% end %>
   <% session[:dealer_cards][start_idx..-1].each do |card| %>
-    <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
+    <%= card_image(card) %>
   <% end %>
   <p>Cards remaining in the deck: <%= session[:deck].size %></p>
 </div>
