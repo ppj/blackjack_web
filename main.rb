@@ -56,7 +56,6 @@ end
 
 post '/new_game' do
   if params[:player_name].strip.empty?
-    session[:player_name]  = nil
     @error = "Name cannot be blank"
     halt erb(:new_game)
   end
