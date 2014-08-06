@@ -55,6 +55,15 @@ end
 
 
 post '/new_game' do
+  if params[:player_name].strip.empty?
+    session[:player_name]  = nil
+    @error = "Name cannot be blank"
+    halt erb(:new_game)
+  end
+  if params[:player_chips].to_i <= 0
+    @error = 'Please start with valid number of chips'
+    halt erb(:new_game)
+  end
   session[:player_name]  = params[:player_name]
   session[:player_chips] = params[:player_chips].to_i
   session[:player_bet]   = session[:player_chips]/5
@@ -65,21 +74,20 @@ end
 
 
 get '/place_bet' do
-  @error = session[:error] if session[:error]
   erb :place_bet
 end
 
 
 post '/begin_round' do
-  session[:player_bet] = params[:player_bet].to_i
-  if session[:player_bet] > session[:player_chips]
-    session[:error] = "You have only #{session[:player_chips]} chips remaining!"
-    redirect '/place_bet'
-  elsif session[:player_bet] == 0
-    session[:error] = "Please place a valid bet, #{session[:player_name]}."
-    redirect '/place_bet'
+  if params[:player_bet].to_i > session[:player_chips]
+    @error = "You have only #{session[:player_chips]} chips remaining!"
+    halt erb(:place_bet)
+  elsif params[:player_bet].to_i == 0
+    @error = "Please place a valid bet, #{session[:player_name]}."
+    halt erb(:place_bet)
   end
 
+  session[:player_bet]   = params[:player_bet].to_i
   session[:deck]         = initialize_deck if session[:deck].size < 20
   session[:player_cards] = []
   session[:dealer_cards] = []
@@ -153,7 +161,6 @@ end
 
 
 post '/play_again' do
-  session[:error] = nil
   redirect :place_bet
 end
 
