@@ -1,17 +1,15 @@
 <h4><%=session[:player_name]%>'s Bet: <%=session[:player_bet]%></h4>
 
-
-<div>
-  <h5>Your Cards: </h5>
+<div class='well'>
+  <h4><%=session[:player_name]%>'s Cards: </h4>
   <% session[:player_cards].each do |card| %>
     <img src="<%= './images/cards2/'+card.join+'.gif' %>" class="img-rounded"/>
   <% end %>
-
-  <p><%=session[:player_name]%>'s Total = <%= total(session[:player_cards]) %></p>
+  <p>Total = <%= total(session[:player_cards]) %></p>
 </div>
 
-<div>
-  <h5>Dealer's Cards: </h5>
+<div class='well'>
+  <h4>Dealer's Cards: </h4>
   <% start_idx = 0 %>
   <% if @show_hit_stay_buttons %>
     <img src="<%= './images/cards2/B.gif' %>" class="img-rounded"/>
@@ -22,21 +20,19 @@
   <% end %>
   <p>Cards remaining in the deck: <%= session[:deck].size %></p>
 </div>
-<br/>
 <% if @show_hit_stay_buttons %>
-  <form class="form-horizontal" action='/game/player/hit' method='post'>
-    <input type="submit" class="btn btn-primary" value="Hit!"/>
+  <form class="decision" action='/game/player/hit' method='post'>
+    <input type="submit" class="btn btn-primary" value="Hit!" />
   </form>
-
-  <form class="form-horizontal" action='/game/player/stay' method='post'>
-    <input type="submit" class="btn btn-warning" value="Stay"/>
+  <form class="decision" action='/game/player/stay' method='post'>
+    <input type="submit" class="btn btn-warning" value="Stay" />
   </form>
 <% elsif session[:player_chips] > 0 %>
-  <form class="form-horizontal" action='/play_again' method='post'>
-    <input type="submit" class="btn btn-primary" value="Play Again"/>
+  <form class="decision" action='/play_again' method='post'>
+    <input type="submit" class="btn btn-primary" value="Play Again" />
   </form>
-  <form class="form-horizontal" action='/game_over'>
-    <input type="submit" class="btn btn-success" value="Show Me The Money!"/>
+  <form class="decision" action='/game_over'>
+    <input type="submit" class="btn btn-success" value="Show Me The Money!" />
   </form>
 <% else %>
   <h4>You've run out of chips, <%=session[:player_name]%><br/>
