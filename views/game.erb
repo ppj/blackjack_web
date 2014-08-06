@@ -13,7 +13,7 @@
 <div>
   <h5>Dealer's Cards: </h5>
   <% start_idx = 0 %>
-  <% unless session[:player_stays] || @error %>
+  <% if @show_hit_stay_buttons %>
     <img src="<%= './images/cards2/B.gif' %>" class="img-rounded"/>
     <% start_idx = 1 %>
   <% end %>
@@ -23,7 +23,7 @@
   <p>Cards remaining in the deck: <%= session[:deck].size %></p>
 </div>
 <br/>
-<% if !@error %>
+<% if @show_hit_stay_buttons %>
   <form class="form-horizontal" action='/game/player/hit' method='post'>
     <input type="submit" class="btn btn-primary" value="Hit!"/>
   </form>
@@ -36,7 +36,7 @@
     <input type="submit" class="btn btn-primary" value="Play Again"/>
   </form>
   <form class="form-horizontal" action='/game_over'>
-    <input type="submit" class="btn btn-success" value="Show Me The Money!!"/>
+    <input type="submit" class="btn btn-success" value="Show Me The Money!"/>
   </form>
 <% else %>
   <h4>You've run out of chips, <%=session[:player_name]%><br/>

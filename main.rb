@@ -35,8 +35,13 @@ helpers do
     return hand_total
   end
 
-
 end
+
+
+before do
+  @show_hit_stay_buttons = true
+end
+
 
 # routes
 get '/' do
@@ -44,33 +49,33 @@ get '/' do
 end
 
 
-post '/set_player_profile' do
+post '/new_game' do
   session[:player_name]  = params[:player_name]
   session[:player_chips] = params[:player_chips].to_i
   session[:player_bet]   = session[:player_chips]/5
   session[:deck]         = initialize_deck
   session[:error]        = nil
-  redirect :pre_round
+  redirect :place_bet
 end
 
 
-get '/pre_round' do
+get '/place_bet' do
   @error = session[:error] if session[:error]
-  erb :pre_round
+  erb :place_bet
 end
 
 
 post '/begin_round' do
   session[:player_bet] = params[:player_bet].to_i
-  session[:deck] = initialize_deck if session[:deck].size < 20
   if session[:player_bet] > session[:player_chips]
     session[:error] = "You have only #{session[:player_chips]} chips remaining!"
-    redirect '/pre_round'
+    redirect '/place_bet'
   elsif session[:player_bet] == 0
     session[:error] = "Please place a valid bet, #{session[:player_name]}."
-    redirect '/pre_round'
+    redirect '/place_bet'
   end
 
+  session[:deck]         = initialize_deck if session[:deck].size < 20
   session[:player_cards] = []
   session[:dealer_cards] = []
   session[:player_stays] = false
@@ -83,33 +88,41 @@ end
 
 
 get '/game' do
-  unless  session[:player_stays]
+  unless session[:player_stays]
     if total(session[:player_cards]) == 21
       if total(session[:dealer_cards]) == 21
-        @error = "Both #{session[:player_name]} and Dealer hit BlackJack! Game pushes"
+        @info = "Both #{session[:player_name]} and Dealer hit BlackJack! Game pushes"
+        @show_hit_stay_buttons = false
       else
-        @error = "#{session[:player_name]} hit a BlackJack!"
+        @success = "#{session[:player_name]} hit a BlackJack!"
         session[:player_chips] += session[:player_bet]
+        @show_hit_stay_buttons = false
       end
     elsif total(session[:player_cards]) > 21
       @error = "#{session[:player_name]} busted!"
       session[:player_chips] -= session[:player_bet]
+      @show_hit_stay_buttons = false
     end
   else
     if total(session[:dealer_cards]) == 21
       @error = "Dealer hit a BlackJack!"
       session[:player_chips] -= session[:player_bet]
+      @show_hit_stay_buttons = false
     elsif total(session[:dealer_cards]) > 21
-      @error = "Dealer busted @ #{total(session[:dealer_cards])}! #{session[:player_name]} wins!"
+      @success = "Dealer busted @ #{total(session[:dealer_cards])}! #{session[:player_name]} wins!"
       session[:player_chips] += session[:player_bet]
+      @show_hit_stay_buttons = false
     elsif total(session[:player_cards]) == total(session[:dealer_cards])
-      @error = "#{session[:player_name]} and Dealer stay @ #{total(session[:player_cards])}! Game pushes"
+      @info = "#{session[:player_name]} and Dealer stay @ #{total(session[:player_cards])}! Game pushes"
+      @show_hit_stay_buttons = false
     elsif total(session[:player_cards]) > total(session[:dealer_cards])
-      @error = "#{session[:player_name]} wins. Dealer stays @ #{total(session[:dealer_cards])}"
+      @success = "#{session[:player_name]} wins. Dealer stays @ #{total(session[:dealer_cards])}"
       session[:player_chips] += session[:player_bet]
+      @show_hit_stay_buttons = false
     else
       @error = "Dealer wins @ #{total(session[:dealer_cards])}"
       session[:player_chips] -= session[:player_bet]
+      @show_hit_stay_buttons = false
     end
   end
 
@@ -136,7 +149,7 @@ end
 
 post '/play_again' do
   session[:error] = nil
-  redirect :pre_round
+  redirect :place_bet
 end
 
 
