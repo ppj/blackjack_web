@@ -5,7 +5,6 @@
   <div class="control-group">
     <label class="control-label">Bet</label>
     <div class="controls">
-      <%session[:player_bet] = session[:player_chips] if session[:player_bet] > session[:player_chips]%>
       <input type="text" name="player_bet" value="<%=session[:player_bet]%>"> chips
     </div>
   </div>

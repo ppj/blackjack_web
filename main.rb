@@ -67,7 +67,7 @@ post '/round/new' do
   session[:player_chips] = params[:player_chips].to_i
   session[:player_bet]   = session[:player_chips]/5
   session[:deck]         = initialize_deck
-  session[:error]        = nil
+
   redirect '/place_bet'
 end
 
@@ -78,11 +78,12 @@ end
 
 
 post '/round/begin' do
-  if params[:player_bet].to_i > session[:player_chips]
-    @error = "You have only #{session[:player_chips]} chips remaining!"
+  if params[:player_bet].to_i == 0
+    @error = "Please place a valid bet, #{session[:player_name]}. Bet set to previous value."
     halt erb(:place_bet)
-  elsif params[:player_bet].to_i == 0
-    @error = "Please place a valid bet, #{session[:player_name]}."
+  elsif params[:player_bet].to_i > session[:player_chips]
+    session[:player_bet] = session[:player_chips]
+    @error = "You have only #{session[:player_chips]} chips remaining! Bet set to #{session[:player_chips]}."
     halt erb(:place_bet)
   end
 
