@@ -50,18 +50,18 @@ end
 
 # routes
 get '/' do
-  erb :new_game
+  erb :new_round
 end
 
 
-post '/new_game' do
+post '/round/new' do
   if params[:player_name].strip.empty?
     @error = "Name cannot be blank"
-    halt erb(:new_game)
+    halt erb(:new_round)
   end
   if params[:player_chips].to_i <= 0
     @error = 'Please start with valid number of chips'
-    halt erb(:new_game)
+    halt erb(:new_round)
   end
   session[:player_name]  = params[:player_name]
   session[:player_chips] = params[:player_chips].to_i
@@ -77,7 +77,7 @@ get '/place_bet' do
 end
 
 
-post '/begin_round' do
+post '/round/begin' do
   if params[:player_bet].to_i > session[:player_chips]
     @error = "You have only #{session[:player_chips]} chips remaining!"
     halt erb(:place_bet)
@@ -95,11 +95,11 @@ post '/begin_round' do
     session[:player_cards] << session[:deck].pop
     session[:dealer_cards] << session[:deck].pop
   }
-  redirect '/game/player'
+  redirect '/round/player'
 end
 
 
-get '/game/player' do
+get '/round/player' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
   if player_total == 21
@@ -121,18 +121,18 @@ get '/game/player' do
 end
 
 
-post '/game/player/hit' do
+post '/round/player/hit' do
   session[:player_cards] << session[:deck].pop
-  redirect '/game/player'
+  redirect '/round/player'
 end
 
 
-post '/game/player/stay' do
-  redirect '/game/dealer'
+post '/round/player/stay' do
+  redirect '/round/dealer'
 end
 
 
-get '/game/dealer' do
+get '/round/dealer' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
   if dealer_total == 21
@@ -144,20 +144,20 @@ get '/game/dealer' do
   elsif dealer_total <= 17
     @show_dealer_hit_button = true
   else
-    redirect '/game/compare'
+    redirect '/round/compare'
   end
 
   erb :game
 end
 
 
-post '/game/dealer/hit' do
+post '/round/dealer/hit' do
   session[:dealer_cards] << session[:deck].pop
-  redirect '/game/dealer'
+  redirect '/round/dealer'
 end
 
 
-get '/game/compare' do
+get '/round/compare' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
   if dealer_total == player_total

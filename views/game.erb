@@ -13,7 +13,7 @@
   <br />
   <% if @show_dealer_hit_button %>
     <p>
-      <form class="decision" action='/game/dealer/hit' method='post'>
+      <form class="decision" action='/round/dealer/hit' method='post'>
         <p>Dealer is at <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="Next Dealer's Card &rarr;" /></p>
       </form>
     </p>
@@ -30,17 +30,17 @@
 
   <% unless @show_dealer_hit_button %>
     <% if @show_hit_stay_buttons %>
-      <form class="decision" action='/game/player/hit' method='post'>
+      <form class="decision" action='/round/player/hit' method='post'>
         <input type="submit" class="btn btn-success" value="Hit!" />
       </form>
-      <form class="decision" action='/game/player/stay' method='post'>
+      <form class="decision" action='/round/player/stay' method='post'>
         <input type="submit" class="btn btn-warning" value="Stay" />
       </form>
     <% elsif session[:player_chips] > 0 %>
       <form class="decision" action='/play_again' method='post'>
         <input type="submit" class="btn btn-primary" value="Play Again" />
       </form>
-      <form class="decision" action='/game_over'>
+      <form class="decision" action='/round_over'>
         <input type="submit" class="btn btn-success" value="Show Me The Money!" />
       </form>
     <% else %>
