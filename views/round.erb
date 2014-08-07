@@ -14,7 +14,7 @@
   <% if @show_dealer_hit_button %>
     <p>
       <form class="decision" action='/round/dealer/hit' method='post'>
-        <p>Dealer is at <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="Next Dealer's Card &rarr;" /></p>
+        <p>Dealer has <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="Next Dealer's Card &rarr;" /></p>
       </form>
     </p>
     <br /><br />
@@ -26,7 +26,7 @@
   <% session[:player_cards].each do |card| %>
     <%= card_image(card) %>
   <% end %>
-  <p><%= "#{session[:player_name]} is at #{total(session[:player_cards])}" %></p>
+  <p><%= "#{session[:player_name]} has #{total(session[:player_cards])}" %></p>
 
   <% unless @show_dealer_hit_button %>
     <% if @show_hit_stay_buttons %>

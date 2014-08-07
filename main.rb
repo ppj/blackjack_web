@@ -4,6 +4,9 @@ end
 
 set :sessions, true
 
+BLACKJACK_VALUE = 21
+DEALER_HIT_MIN  = 17
+
 helpers do
 
   def initialize_deck
@@ -28,7 +31,7 @@ helpers do
     end
 
     ace_count.times do
-      if hand_total > 21
+      if hand_total > BLACKJACK_VALUE
         hand_total -= 10
       end
     end
@@ -39,6 +42,22 @@ helpers do
   def card_image(card)
     "<img src='/images/cards2/#{card.join}.gif' class='img-rounded card-image' />"
   end
+
+
+  def game_won(msg)
+    @success = "<strong>#{session[:player_name]} won!</strong> #{msg}"
+    session[:player_chips] += session[:player_bet]
+  end
+
+  def game_lost(msg)
+    @error = "<strong>#{session[:player_name]} lost.</strong> #{msg}"
+    session[:player_chips] -= session[:player_bet]
+  end
+
+  def game_pushed(msg)
+    @error = "<strong>Game pushed!</strong> #{msg}"
+  end
+
 
 end
 
@@ -103,16 +122,14 @@ end
 get '/round/player' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
-  if player_total == 21
-    if dealer_total == 21
-      @info = "Both #{session[:player_name]} and Dealer hit BlackJack! Game pushes"
+  if player_total == BLACKJACK_VALUE
+    if dealer_total == BLACKJACK_VALUE
+      game_pushed "Both #{session[:player_name]} and Dealer hit BlackJack!"
     else
-      @success = "#{session[:player_name]} hit a BlackJack!"
-      session[:player_chips] += session[:player_bet]
+      game_won "#{session[:player_name]} hit a BlackJack! Dealer had #{dealer_total}."
     end
-  elsif player_total > 21
-    @error = "#{session[:player_name]} busted!"
-    session[:player_chips] -= session[:player_bet]
+  elsif player_total > BLACKJACK_VALUE
+    game_lost "#{session[:player_name]} busted @ #{player_total}. Dealer had #{dealer_total}."
   else
     @show_hit_stay_buttons = true
   end
@@ -136,13 +153,11 @@ end
 get '/round/dealer' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
-  if dealer_total == 21
-    @error = "Dealer hit a BlackJack!"
-    session[:player_chips] -= session[:player_bet]
-  elsif dealer_total > 21
-    @success = "Dealer busted @ #{dealer_total}! #{session[:player_name]} wins!"
-    session[:player_chips] += session[:player_bet]
-  elsif dealer_total <= 17
+  if dealer_total == BLACKJACK_VALUE
+    game_lost "Dealer hit a BlackJack! #{session[:player_name]} stayed @ #{player_total}."
+  elsif dealer_total > BLACKJACK_VALUE
+    game_won "Dealer busted @ #{dealer_total}! #{session[:player_name]} stayed @ #{player_total}."
+  elsif dealer_total <= DEALER_HIT_MIN
     @show_dealer_hit_button = true
   else
     redirect '/round/compare'
@@ -162,13 +177,11 @@ get '/round/compare' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
   if dealer_total == player_total
-    @info = "#{session[:player_name]} and Dealer stay @ #{player_total}! Game pushes"
+    game_pushed "#{session[:player_name]} and Dealer stayed @ #{player_total}"
   elsif dealer_total < player_total
-    @success = "#{session[:player_name]} wins. Dealer stays @ #{dealer_total}"
-    session[:player_chips] += session[:player_bet]
+    game_won  "Dealer stayed @ #{dealer_total}. #{session[:player_name]} stayed @ #{player_total}."
   else
-    @error = "Dealer wins @ #{dealer_total}"
-    session[:player_chips] -= session[:player_bet]
+    game_lost "Dealer stayed @ #{dealer_total}. #{session[:player_name]} stayed @ #{player_total}."
   end
 
   erb :round
