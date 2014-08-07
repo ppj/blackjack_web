@@ -135,22 +135,16 @@ end
 get '/game/dealer' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
-  if dealer_total <= 17
-    @show_dealer_hit_button = true
-  elsif dealer_total == 21
+  if dealer_total == 21
     @error = "Dealer hit a BlackJack!"
     session[:player_chips] -= session[:player_bet]
   elsif dealer_total > 21
     @success = "Dealer busted @ #{dealer_total}! #{session[:player_name]} wins!"
     session[:player_chips] += session[:player_bet]
-  elsif dealer_total == player_total
-    @info = "#{session[:player_name]} and Dealer stay @ #{player_total}! Game pushes"
-  elsif dealer_total < player_total
-    @success = "#{session[:player_name]} wins. Dealer stays @ #{dealer_total}"
-    session[:player_chips] += session[:player_bet]
+  elsif dealer_total <= 17
+    @show_dealer_hit_button = true
   else
-    @error = "Dealer wins @ #{dealer_total}"
-    session[:player_chips] -= session[:player_bet]
+    redirect '/game/compare'
   end
 
   erb :game
@@ -162,6 +156,22 @@ post '/game/dealer/hit' do
   redirect '/game/dealer'
 end
 
+
+get '/game/compare' do
+  player_total = total(session[:player_cards])
+  dealer_total = total(session[:dealer_cards])
+  if dealer_total == player_total
+    @info = "#{session[:player_name]} and Dealer stay @ #{player_total}! Game pushes"
+  elsif dealer_total < player_total
+    @success = "#{session[:player_name]} wins. Dealer stays @ #{dealer_total}"
+    session[:player_chips] += session[:player_bet]
+  else
+    @error = "Dealer wins @ #{dealer_total}"
+    session[:player_chips] -= session[:player_bet]
+  end
+
+  erb :game
+end
 
 
 post '/play_again' do
