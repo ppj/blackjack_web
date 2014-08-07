@@ -43,9 +43,9 @@ helpers do
 end
 
 
-before do
-  @show_hit_stay_buttons = true
-end
+# before do
+  # @show_hit_stay_buttons = true
+# end
 
 
 # routes
@@ -68,7 +68,7 @@ post '/new_game' do
   session[:player_bet]   = session[:player_chips]/5
   session[:deck]         = initialize_deck
   session[:error]        = nil
-  redirect :place_bet
+  redirect '/place_bet'
 end
 
 
@@ -95,72 +95,77 @@ post '/begin_round' do
     session[:player_cards] << session[:deck].pop
     session[:dealer_cards] << session[:deck].pop
   }
-  redirect :game
+  redirect '/game/player'
 end
 
 
-get '/game' do
-  unless session[:player_stays]
-    if total(session[:player_cards]) == 21
-      if total(session[:dealer_cards]) == 21
-        @info = "Both #{session[:player_name]} and Dealer hit BlackJack! Game pushes"
-        @show_hit_stay_buttons = false
-      else
-        @success = "#{session[:player_name]} hit a BlackJack!"
-        session[:player_chips] += session[:player_bet]
-        @show_hit_stay_buttons = false
-      end
-    elsif total(session[:player_cards]) > 21
-      @error = "#{session[:player_name]} busted!"
-      session[:player_chips] -= session[:player_bet]
-      @show_hit_stay_buttons = false
-    end
-  else
-    if total(session[:dealer_cards]) == 21
-      @error = "Dealer hit a BlackJack!"
-      session[:player_chips] -= session[:player_bet]
-      @show_hit_stay_buttons = false
-    elsif total(session[:dealer_cards]) > 21
-      @success = "Dealer busted @ #{total(session[:dealer_cards])}! #{session[:player_name]} wins!"
-      session[:player_chips] += session[:player_bet]
-      @show_hit_stay_buttons = false
-    elsif total(session[:player_cards]) == total(session[:dealer_cards])
-      @info = "#{session[:player_name]} and Dealer stay @ #{total(session[:player_cards])}! Game pushes"
-      @show_hit_stay_buttons = false
-    elsif total(session[:player_cards]) > total(session[:dealer_cards])
-      @success = "#{session[:player_name]} wins. Dealer stays @ #{total(session[:dealer_cards])}"
-      session[:player_chips] += session[:player_bet]
-      @show_hit_stay_buttons = false
+get '/game/player' do
+  player_total = total(session[:player_cards])
+  dealer_total = total(session[:dealer_cards])
+  if player_total == 21
+    if dealer_total == 21
+      @info = "Both #{session[:player_name]} and Dealer hit BlackJack! Game pushes"
     else
-      @error = "Dealer wins @ #{total(session[:dealer_cards])}"
-      session[:player_chips] -= session[:player_bet]
-      @show_hit_stay_buttons = false
+      @success = "#{session[:player_name]} hit a BlackJack!"
+      session[:player_chips] += session[:player_bet]
     end
+  elsif player_total > 21
+    @error = "#{session[:player_name]} busted!"
+    session[:player_chips] -= session[:player_bet]
+  else
+    @show_hit_stay_buttons = true
+  end
+
+  erb :game
+
+end
+
+
+post '/game/player/hit' do
+  session[:player_cards] << session[:deck].pop
+  redirect '/game/player'
+end
+
+
+post '/game/player/stay' do
+  redirect '/game/dealer'
+end
+
+
+get '/game/dealer' do
+  player_total = total(session[:player_cards])
+  dealer_total = total(session[:dealer_cards])
+  if dealer_total <= 17
+    @show_dealer_hit_button = true
+  elsif dealer_total == 21
+    @error = "Dealer hit a BlackJack!"
+    session[:player_chips] -= session[:player_bet]
+  elsif dealer_total > 21
+    @success = "Dealer busted @ #{dealer_total}! #{session[:player_name]} wins!"
+    session[:player_chips] += session[:player_bet]
+  elsif dealer_total == player_total
+    @info = "#{session[:player_name]} and Dealer stay @ #{player_total}! Game pushes"
+  elsif dealer_total < player_total
+    @success = "#{session[:player_name]} wins. Dealer stays @ #{dealer_total}"
+    session[:player_chips] += session[:player_bet]
+  else
+    @error = "Dealer wins @ #{dealer_total}"
+    session[:player_chips] -= session[:player_bet]
   end
 
   erb :game
 end
 
 
-post '/game/player/hit' do
-  session[:player_cards] << session[:deck].pop
-  redirect :game
+post '/game/dealer/hit' do
+  session[:dealer_cards] << session[:deck].pop
+  redirect '/game/dealer'
 end
 
-
-post '/game/player/stay' do
-  session[:player_stays] = true
-  while total(session[:dealer_cards]) < 18
-    session[:dealer_cards] << session[:deck].pop
-  end
-
-  redirect :game
-
-end
 
 
 post '/play_again' do
-  redirect :place_bet
+  redirect '/place_bet'
 end
 
 

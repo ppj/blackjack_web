@@ -1,14 +1,6 @@
 <h4><%=session[:player_name]%>'s Bet: <%=session[:player_bet]%></h4>
 
-<div class='well'>
-  <h4><%=session[:player_name]%>'s Cards: </h4>
-  <% session[:player_cards].each do |card| %>
-    <%= card_image(card) %>
-  <% end %>
-  <p>Total = <%= total(session[:player_cards]) %></p>
-</div>
-
-<div class='well'>
+<div class='well well-small'>
   <h4>Dealer's Cards: </h4>
   <% start_idx = 0 %>
   <% if @show_hit_stay_buttons %>
@@ -18,25 +10,46 @@
   <% session[:dealer_cards][start_idx..-1].each do |card| %>
     <%= card_image(card) %>
   <% end %>
-  <p>Cards remaining in the deck: <%= session[:deck].size %></p>
+  <br />
+  <% if @show_dealer_hit_button %>
+    <p>
+      <form class="decision" action='/game/dealer/hit' method='post'>
+        <p>Dealer is at <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="Next Dealer's Card &rarr;" /></p>
+      </form>
+    </p>
+    <br /><br />
+  <% end %>
 </div>
-<% if @show_hit_stay_buttons %>
-  <form class="decision" action='/game/player/hit' method='post'>
-    <input type="submit" class="btn btn-primary" value="Hit!" />
-  </form>
-  <form class="decision" action='/game/player/stay' method='post'>
-    <input type="submit" class="btn btn-warning" value="Stay" />
-  </form>
-<% elsif session[:player_chips] > 0 %>
-  <form class="decision" action='/play_again' method='post'>
-    <input type="submit" class="btn btn-primary" value="Play Again" />
-  </form>
-  <form class="decision" action='/game_over'>
-    <input type="submit" class="btn btn-success" value="Show Me The Money!" />
-  </form>
-<% else %>
-  <h4>You've run out of chips, <%=session[:player_name]%><br/>
-      No more BlackJack for you!
-  </h4>
-  <h6>Unless you <a href='/'>start over</a></h6>
-<% end %>
+
+<div class='well well-small'>
+  <h4><%=session[:player_name]%>'s Cards: </h4>
+  <% session[:player_cards].each do |card| %>
+    <%= card_image(card) %>
+  <% end %>
+  <p><%= "#{session[:player_name]} is at #{total(session[:player_cards])}" %></p>
+
+  <% unless @show_dealer_hit_button %>
+    <% if @show_hit_stay_buttons %>
+      <form class="decision" action='/game/player/hit' method='post'>
+        <input type="submit" class="btn btn-success" value="Hit!" />
+      </form>
+      <form class="decision" action='/game/player/stay' method='post'>
+        <input type="submit" class="btn btn-warning" value="Stay" />
+      </form>
+    <% elsif session[:player_chips] > 0 %>
+      <form class="decision" action='/play_again' method='post'>
+        <input type="submit" class="btn btn-primary" value="Play Again" />
+      </form>
+      <form class="decision" action='/game_over'>
+        <input type="submit" class="btn btn-success" value="Show Me The Money!" />
+      </form>
+    <% else %>
+      <h4>You've run out of chips, <%=session[:player_name]%><br/>
+          No more BlackJack for you!
+      </h4>
+      <h6>Unless you <a href='/'>start over</a></h6>
+    <% end %>
+    <br /><br />
+  <% end %>
+
+</div>
