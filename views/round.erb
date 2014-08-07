@@ -14,7 +14,7 @@
   <% if @show_dealer_hit_button %>
     <p>
       <form class="decision" action='/round/dealer/hit' method='post'>
-        <p>Dealer has <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="Next Dealer's Card &rarr;" /></p>
+        <p>Dealer has <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="See Next Card&rarr;" /></p>
       </form>
     </p>
     <br /><br />
