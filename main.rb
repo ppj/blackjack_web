@@ -116,7 +116,7 @@ get '/round/player' do
     @show_hit_stay_buttons = true
   end
 
-  erb :game
+  erb :round
 
 end
 
@@ -147,7 +147,7 @@ get '/round/dealer' do
     redirect '/round/compare'
   end
 
-  erb :game
+  erb :round
 end
 
 
@@ -170,7 +170,7 @@ get '/round/compare' do
     session[:player_chips] -= session[:player_bet]
   end
 
-  erb :game
+  erb :round
 end
 
 
