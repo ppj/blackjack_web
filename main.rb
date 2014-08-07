@@ -55,7 +55,7 @@ helpers do
   end
 
   def game_pushed(msg)
-    @error = "<strong>Game pushed!</strong> #{msg}"
+    @info = "<strong>Game pushed!</strong> #{msg}"
   end
 
 
