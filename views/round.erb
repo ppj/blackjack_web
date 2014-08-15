@@ -1,4 +1,11 @@
 <div id='game_area'>
+<% if @error %>
+  <div class="alert alert-error"><%=@error%></div>
+<% elsif @info %>
+  <div class="alert alert-info"><%=@info%></div>
+<% elsif @success %>
+  <div class="alert alert-success"><%=@success%></div>
+<% end %>
 <div class='well well-small'>
   <h4>Dealer's Cards: </h4>
   <% start_idx = 0 %>
@@ -12,7 +19,7 @@
   <br />
   <% if @show_dealer_hit_button %>
     <p>
-      <form class="decision" action='/round/dealer/hit' method='post'>
+      <form class="decision" action='/round/dealer/hit' method='post' id='dealer_hit_form'>
         <p>Dealer has <%= total(session[:dealer_cards]) %> and will hit: <input type="submit" class="btn btn-primary" value="See Dealer's Next Card&rarr;" /></p>
       </form>
     </p>
@@ -32,10 +39,10 @@
 
   <% unless @show_dealer_hit_button %>
     <% if @show_hit_stay_buttons %>
-      <form class="decision" action='/round/player/hit' method='post' id='hit_form'>
+      <form class="decision" action='/round/player/hit' method='post' id='player_hit_form'>
         <input type="submit" class="btn btn-success" value="Hit!" />
       </form>
-      <form class="decision" action='/round/player/stay' method='post'>
+      <form class="decision" action='/round/player/stay' method='post' id='player_stay_form'>
         <input type="submit" class="btn btn-warning" value="Stay" />
       </form>
       <br /><br />

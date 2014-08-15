@@ -58,7 +58,7 @@ helpers do
     @info = "<strong>Game pushed!</strong> #{msg}"
   end
 
-  def player_won_or_lost?
+  def player_hit_blackjack_or_busted?
     player_total = total(session[:player_cards])
     dealer_total = total(session[:dealer_cards])
     if player_total == BLACKJACK_VALUE
@@ -76,6 +76,36 @@ helpers do
       return false
     end
   end
+
+
+  def dealer_hit_blackjack_or_busted?
+    player_total = total(session[:player_cards])
+    dealer_total = total(session[:dealer_cards])
+    if dealer_total == BLACKJACK_VALUE
+      game_lost "Dealer hit a BlackJack! #{session[:player_name]} stayed @ #{player_total}."
+      return true
+    elsif dealer_total > BLACKJACK_VALUE
+      game_won "Dealer busted @ #{dealer_total}! #{session[:player_name]} stayed @ #{player_total}."
+      return true
+    elsif dealer_total <= DEALER_HIT_MIN
+      @show_dealer_hit_button = true
+    end
+    return false
+  end
+
+
+  def check_game_result
+    player_total = total(session[:player_cards])
+    dealer_total = total(session[:dealer_cards])
+    if dealer_total == player_total
+      game_pushed "#{session[:player_name]} and Dealer stayed @ #{player_total}"
+    elsif dealer_total < player_total
+      game_won  "Dealer stayed @ #{dealer_total}. #{session[:player_name]} stayed @ #{player_total}."
+    else
+      game_lost "Dealer stayed @ #{dealer_total}. #{session[:player_name]} stayed @ #{player_total}."
+    end
+  end
+
 
 end
 
@@ -138,8 +168,10 @@ end
 
 
 get '/round/player' do
-
-  if !player_won_or_lost? & params[:hide_layout]
+  # FIXME - if player hits blackjack, two success msgs are shown
+  # FIXME - above route should be renamed to /round since that url is shown for the both, player's and dealer's turns
+  player_hit_blackjack_or_busted?
+  if params[:hide_layout]
     erb :round, layout: false
   else
     erb :round
@@ -155,45 +187,31 @@ end
 
 
 post '/round/player/stay' do
-  redirect '/round/dealer'
+  redirect '/round/dealer?hide_layout=true'
 end
 
 
 get '/round/dealer' do
-  player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
-  if dealer_total == BLACKJACK_VALUE
-    game_lost "Dealer hit a BlackJack! #{session[:player_name]} stayed @ #{player_total}."
-  elsif dealer_total > BLACKJACK_VALUE
-    game_won "Dealer busted @ #{dealer_total}! #{session[:player_name]} stayed @ #{player_total}."
-  elsif dealer_total <= DEALER_HIT_MIN
-    @show_dealer_hit_button = true
-  else
+  if !dealer_hit_blackjack_or_busted? & (dealer_total > DEALER_HIT_MIN)
     redirect '/round/compare'
+  elsif params[:hide_layout]
+    erb :round, layout: false
+  else
+    erb :round
   end
-
-  erb :round
 end
 
 
 post '/round/dealer/hit' do
   session[:dealer_cards] << session[:deck].pop
-  redirect '/round/dealer'
+  redirect '/round/dealer?hide_layout=true'
 end
 
 
 get '/round/compare' do
-  player_total = total(session[:player_cards])
-  dealer_total = total(session[:dealer_cards])
-  if dealer_total == player_total
-    game_pushed "#{session[:player_name]} and Dealer stayed @ #{player_total}"
-  elsif dealer_total < player_total
-    game_won  "Dealer stayed @ #{dealer_total}. #{session[:player_name]} stayed @ #{player_total}."
-  else
-    game_lost "Dealer stayed @ #{dealer_total}. #{session[:player_name]} stayed @ #{player_total}."
-  end
-
-  erb :round
+  check_game_result
+  erb :round, layout: false
 end
 
 
