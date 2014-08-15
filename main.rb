@@ -58,6 +58,24 @@ helpers do
     @info = "<strong>Game pushed!</strong> #{msg}"
   end
 
+  def player_won_or_lost?
+    player_total = total(session[:player_cards])
+    dealer_total = total(session[:dealer_cards])
+    if player_total == BLACKJACK_VALUE
+      if dealer_total == BLACKJACK_VALUE
+        game_pushed "Both #{session[:player_name]} and Dealer hit BlackJack!"
+      else
+        game_won "#{session[:player_name]} hit a BlackJack! Dealer had #{dealer_total}."
+      end
+      return true
+    elsif player_total > BLACKJACK_VALUE
+      game_lost "#{session[:player_name]} busted @ #{player_total}. Dealer had #{dealer_total}."
+      return true
+    else
+      @show_hit_stay_buttons = true
+      return false
+    end
+  end
 
 end
 
@@ -120,28 +138,19 @@ end
 
 
 get '/round/player' do
-  player_total = total(session[:player_cards])
-  dealer_total = total(session[:dealer_cards])
-  if player_total == BLACKJACK_VALUE
-    if dealer_total == BLACKJACK_VALUE
-      game_pushed "Both #{session[:player_name]} and Dealer hit BlackJack!"
-    else
-      game_won "#{session[:player_name]} hit a BlackJack! Dealer had #{dealer_total}."
-    end
-  elsif player_total > BLACKJACK_VALUE
-    game_lost "#{session[:player_name]} busted @ #{player_total}. Dealer had #{dealer_total}."
-  else
-    @show_hit_stay_buttons = true
-  end
 
-  erb :round
+  if !player_won_or_lost? & params[:hide_layout]
+    erb :round, layout: false
+  else
+    erb :round
+  end
 
 end
 
-
+# Ajaxified!
 post '/round/player/hit' do
   session[:player_cards] << session[:deck].pop
-  redirect '/round/player'
+  redirect '/round/player?hide_layout=true'
 end
 
 

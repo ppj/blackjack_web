@@ -1,3 +1,4 @@
+<div id='game_area'>
 <div class='well well-small'>
   <h4>Dealer's Cards: </h4>
   <% start_idx = 0 %>
@@ -19,11 +20,13 @@
   <% end %>
 </div>
 
-<div class='well well-small'>
+<div class='well well-small' id='player_area'>
   <h4><%= "#{session[:player_name]}'s Cards (Total = #{total(session[:player_cards])}):" %></h4>
+  <div id='card_display'>
   <% session[:player_cards].each do |card| %>
     <%= card_image(card) %>
   <% end %>
+  </div>
   <h5><%=session[:player_name]%> bet <%=session[:player_bet]%> in this round and has <%=session[:player_chips]%> chips remaining.</h5>
   <p />
 
@@ -52,4 +55,5 @@
     <% end %>
   <% end %>
 
+</div>
 </div>
