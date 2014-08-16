@@ -117,20 +117,26 @@ end
 
 # routes
 get '/' do
-  erb :new_round
+  if session[:new_game_error]
+    @error = session[:new_game_error]
+    session[:new_game_error] = nil
+  end
+  erb :new_game
 end
 
 
-post '/round/new' do
+post '/game/new' do
   if params[:player_name].strip.empty?
-    @error = "Name cannot be blank"
-    halt erb(:new_round)
-  end
-  if params[:player_chips].to_i <= 0
-    @error = 'Please start with valid number of chips'
-    halt erb(:new_round)
+    session[:new_game_error] = "Name cannot be blank"
+    session[:player_name] = ''
+    halt redirect('/')
   end
   session[:player_name]  = params[:player_name]
+
+  if params[:player_chips].to_i <= 0
+    session[:new_game_error] = 'Please start with valid number of chips'
+    halt redirect('/')
+  end
   session[:player_chips] = params[:player_chips].to_i
   session[:player_bet]   = session[:player_chips]/5
   session[:deck]         = initialize_deck
@@ -140,18 +146,22 @@ end
 
 
 get '/place_bet' do
+  if session[:bet_error]
+    @error = session[:bet_error]
+    session[:bet_error] = nil
+  end
   erb :place_bet
 end
 
 
 post '/round/begin' do
   if params[:player_bet].to_i == 0
-    @error = "Please place a valid bet, #{session[:player_name]}. Bet set to previous value."
-    halt erb(:place_bet)
+    session[:bet_error] = "Please place a valid bet, #{session[:player_name]}. Bet set to previous/default value."
+    halt redirect('/place_bet')
   elsif params[:player_bet].to_i > session[:player_chips]
     session[:player_bet] = session[:player_chips]
-    @error = "You have only #{session[:player_chips]} chips remaining! Bet set to #{session[:player_chips]}."
-    halt erb(:place_bet)
+    session[:bet_error] = "You have only #{session[:player_chips]} chips remaining! Bet set to #{session[:player_chips]}."
+    halt redirect('/place_bet')
   end
 
   session[:player_bet]   = params[:player_bet].to_i
