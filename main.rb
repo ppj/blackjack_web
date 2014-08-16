@@ -45,17 +45,17 @@ helpers do
 
 
   def game_won(msg)
-    @success = "<strong>#{session[:player_name]} won!</strong> #{msg}"
+    @won = "<strong>#{session[:player_name]} won!</strong> #{msg}"
     session[:player_chips] += session[:player_bet]
   end
 
   def game_lost(msg)
-    @error = "<strong>#{session[:player_name]} lost.</strong> #{msg}"
+    @lost = "<strong>#{session[:player_name]} lost.</strong> #{msg}"
     session[:player_chips] -= session[:player_bet]
   end
 
   def game_pushed(msg)
-    @info = "<strong>Game pushed!</strong> #{msg}"
+    @pushed = "<strong>Game pushed!</strong> #{msg}"
   end
 
   def player_hit_blackjack_or_busted?
@@ -163,13 +163,11 @@ post '/round/begin' do
     session[:player_cards] << session[:deck].pop
     session[:dealer_cards] << session[:deck].pop
   }
-  redirect '/round/player'
+  redirect '/round'
 end
 
-
-get '/round/player' do
+get '/round' do
   # FIXME - if player hits blackjack, two success msgs are shown
-  # FIXME - above route should be renamed to /round since that url is shown for the both, player's and dealer's turns
   player_hit_blackjack_or_busted?
   if params[:hide_layout]
     erb :round, layout: false
@@ -182,7 +180,7 @@ end
 # Ajaxified!
 post '/round/player/hit' do
   session[:player_cards] << session[:deck].pop
-  redirect '/round/player?hide_layout=true'
+  redirect '/round?hide_layout=true'
 end
 
 

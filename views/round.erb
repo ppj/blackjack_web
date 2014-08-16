@@ -1,10 +1,10 @@
 <div id='game_area'>
-<% if @error %>
-  <div class="alert alert-error"><%=@error%></div>
-<% elsif @info %>
-  <div class="alert alert-info"><%=@info%></div>
-<% elsif @success %>
-  <div class="alert alert-success"><%=@success%></div>
+<% if @lost %>
+  <div class="alert alert-error"><%=@lost%></div>
+<% elsif @pushed %>
+  <div class="alert alert-info"><%=@pushed%></div>
+<% elsif @won %>
+  <div class="alert alert-success"><%=@won%></div>
 <% end %>
 <div class='well well-small'>
   <h4>Dealer's Cards: </h4>
